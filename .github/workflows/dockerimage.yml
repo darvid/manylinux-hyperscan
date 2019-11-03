@@ -1,9 +1,24 @@
 name: Docker Image CI
-on: [push]
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag manylinux-hyperscan:$(date +%s)
+      run: |
+        docker build . \
+          --file Dockerfile \
+          --tag docker.pkg.github.com/darvid/manylinux-hyperscan/manylinux-hyperscan:latest
+    - name: Push Docker image to GPR
+      run: |
+        docker login docker.pkg.github.com -u darvid -p "${GITHUB_PACKAGE_REGISTRY_TOKEN}"
+        docker push docker.pkg.github.com/darvid/manylinux-hyperscan/manylinux-hyperscan:latest
+    env:
+      GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
