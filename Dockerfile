@@ -1,7 +1,7 @@
 FROM quay.io/pypa/manylinux1_x86_64
 LABEL maintainer="David Gidwani <david.gidwani@gmail.com>"
 ARG boost_dist_url=http://downloads.sourceforge.net/project/boost/boost/1.57.0/boost_1_57_0.tar.bz2
-ARG hyperscan_tag=v5.1.1
+ARG hyperscan_tag=v5.2.1
 ARG ragel_version=6.10
 RUN yum install -y gcc git wget && \
   /opt/python/cp27-cp27mu/bin/pip install cmake && \
