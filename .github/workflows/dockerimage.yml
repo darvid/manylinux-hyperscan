@@ -16,11 +16,11 @@ jobs:
       run: |
         docker build . \
           --file Dockerfile \
-          --tag docker.pkg.github.com/darvid/manylinux-hyperscan/manylinux-hyperscan:${RELEASE_VERSION}
+          --tag docker.pkg.github.com/darvid/manylinux-hyperscan/manylinux-hyperscan:${RELEASE_VERSION:-latest}
     - name: Push Docker image to GPR
       run: |
         docker login docker.pkg.github.com -u darvid -p "${GITHUB_PACKAGE_REGISTRY_TOKEN}"
-        docker push docker.pkg.github.com/darvid/manylinux-hyperscan/manylinux-hyperscan:${RELEASE_VERSION}
+        docker push docker.pkg.github.com/darvid/manylinux-hyperscan/manylinux-hyperscan:${RELEASE_VERSION:-latest}
     - name: Push Docker image to Docker Hub
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
