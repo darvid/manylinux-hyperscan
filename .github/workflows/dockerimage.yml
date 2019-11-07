@@ -19,5 +19,11 @@ jobs:
       run: |
         docker login docker.pkg.github.com -u darvid -p "${GITHUB_PACKAGE_REGISTRY_TOKEN}"
         docker push docker.pkg.github.com/darvid/manylinux-hyperscan/manylinux-hyperscan:${RELEASE_VERSION}
+    - name: Push Docker image to Docker Hub
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: darvid/manylinux-hyperscan
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
     env:
       GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
