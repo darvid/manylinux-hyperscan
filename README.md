@@ -1,6 +1,7 @@
 # manylinux-hyperscan
 
-[![Build Status](https://travis-ci.org/darvid/manylinux-hyperscan.svg?branch=master)](https://travis-ci.org/darvid/manylinux-hyperscan)
+![](https://github.com/darvid/manylinux-hyperscan/workflows/Publish%20Docker%20Image/badge.svg?branch=master)
+
 
 This project provides an **x86_64 only** [manylinux][1]-based Docker
 image with [Hyperscan][2] installed.
