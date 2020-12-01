@@ -23,7 +23,7 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
+          password: ${{ secrets.CR_PAT }}
           registry: docker.pkg.github.com
           repository: darvid/manylinux-hyperscan/manylinux-hyperscan
           tag_with_ref: true
