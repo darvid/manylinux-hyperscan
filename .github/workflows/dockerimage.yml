@@ -24,6 +24,6 @@ jobs:
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
-          registry: docker.pkg.github.com
-          repository: darvid/manylinux-hyperscan/manylinux-hyperscan
+          registry: ghcr.io
+          repository: darvid/manylinux-hyperscan
           tag_with_ref: true
