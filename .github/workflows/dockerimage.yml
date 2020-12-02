@@ -17,6 +17,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           cache: true
           snapshot: true
+          tag_semver: true
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v1
         with:
