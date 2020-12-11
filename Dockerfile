@@ -20,9 +20,9 @@ RUN yum install -y gcc git wget && \
   mkdir -p hyperscan/build
 RUN cd /tmp/hyperscan/build && \
   git checkout ${hyperscan_tag} && \
-  /opt/python/cp35-cp35m/bin/cmake \
+  CFLAGS=-fPIC CXXFLAGS=-fPIC /opt/python/cp35-cp35m/bin/cmake \
   -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-  -DBUILD_SHARED_LIBS=ON \
+  -DBUILD_STATIC_AND_SHARED=on \
   -G "Unix Makefiles" \
   ../ && \
   make && \
