@@ -1,5 +1,5 @@
 ARG boost_version=1.57.0
-ARG build_type=Release
+ARG build_type=RelWithDebugInfo
 ARG hyperscan_version=v5.4.0
 ARG pcre_version=8.44
 ARG ragel_version=6.10
