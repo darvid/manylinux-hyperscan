@@ -27,7 +27,7 @@ FROM base_hyperscan as build_pcre
 ARG pcre_version
 ENV CFLAGS=-fPIC
 WORKDIR /tmp/hyperscan
-RUN wget -qO- https://ftp.pcre.org/pub/pcre/pcre-${pcre_version}.tar.gz | tar xvz
+RUN wget -qO- https://sourceforge.net/projects/pcre/files/pcre/${pcre_version}/pcre-${pcre_version}.tar.gz/download | tar xvz
 WORKDIR /tmp/hyperscan/pcre-${pcre_version}
 RUN ./configure --prefix=/opt/pcre --enable-unicode-properties --enable-utf
 RUN make && make install
