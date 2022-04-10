@@ -1,7 +1,7 @@
 ARG boost_version=1.57.0
 ARG build_type=RelWithDebugInfo
 ARG hyperscan_version=v5.4.0
-ARG pcre_version=8.44
+ARG pcre_version=8.45
 ARG ragel_version=6.10
 
 FROM quay.io/pypa/manylinux_2_24_x86_64 AS base
