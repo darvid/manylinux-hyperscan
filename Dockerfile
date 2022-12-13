@@ -52,7 +52,7 @@ RUN cmake \
   ../
 RUN make -j$(nproc) && make install
 
-FROM quay.io/pypa/manylinux_2_24_x86_64
+FROM quay.io/pypa/manylinux_2_24_x86_64:2022-12-11-145d107
 ARG pcre_version
 ENV LD_LIBRARY_PATH=/opt/hyperscan/lib:${LD_LIBRARY_PATH}
 ENV PKG_CONFIG_PATH=/opt/hyperscan/lib/pkgconfig
