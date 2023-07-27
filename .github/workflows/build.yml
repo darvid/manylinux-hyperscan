@@ -1,0 +1,80 @@
+name: Build container images
+on:
+  workflow_dispatch:
+    inputs:
+      useCache:
+        description: Use GHA cache
+        type: boolean
+        required: false
+        default: true
+  push:
+    paths:
+      - ".github/workflows/build.yml"
+      - "Dockerfile"
+      - "*.sh"
+  pull_request:
+    paths:
+      - ".github/workflows/build.yml"
+      - "Dockerfile"
+      - "build.sh"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: python_hyperscan
+jobs:
+  build_manylinux:
+    name: ${{ matrix.policy }}_${{ matrix.platform }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        policy: ["manylinux2014", "musllinux_1_1"]
+        platform: ["i686", "x86_64"]
+        include:
+          - policy: "manylinux_2_28"
+            platform: "x86_64"
+    env:
+      POLICY: ${{ matrix.policy }}
+      PLATFORM: ${{ matrix.platform }}
+      COMMIT_SHA: ${{ github.sha }}
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up emulation
+        if: matrix.platform != 'i686' && matrix.platform != 'x86_64'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: ${{ matrix.platform }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Set up emulation
+        if: matrix.platform != 'i686' && matrix.platform != 'x86_64'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: ${{ matrix.platform }}
+
+      - name: Setup cache
+        if: github.event_name != 'workflow_dispatch' || fromJSON(github.event.inputs.useCache)
+        uses: actions/cache@v3
+        with:
+          path: .buildx-cache-${{ matrix.policy }}_${{ matrix.platform }}/*
+          key: buildx-cache-${{ matrix.policy }}-${{ matrix.platform }}-${{ hashFiles('Dockerfile') }}
+          restore-keys: buildx-cache-${{ matrix.policy }}-${{ matrix.platform }}-
+
+      - name: Build
+        run: ./build.sh
+
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      - name: Deploy
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'darvid/manylinux-hyperscan'
+        run: ./deploy.sh
