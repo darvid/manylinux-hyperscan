@@ -9,7 +9,7 @@ ARG PREPEND_PATH=${DEVTOOLSET_ROOTPATH}/usr/bin:
 ARG boost_version=1.57.0
 ARG build_type=RelWithDebugInfo
 ARG hyperscan_version=v5.4.2
-ARG pcre_version=8.45
+ARG pcre_version=10.42
 ARG ragel_version=6.10
 
 FROM quay.io/pypa/${POLICY}_${PLATFORM}:${TAG} AS base
@@ -37,8 +37,8 @@ FROM base_hyperscan as build_pcre
 ARG pcre_version
 ENV CFLAGS="-fPIC"
 WORKDIR /tmp/hyperscan
-RUN wget -qO- https://sourceforge.net/projects/pcre/files/pcre/${pcre_version}/pcre-${pcre_version}.tar.gz/download | tar xvz
-WORKDIR /tmp/hyperscan/pcre-${pcre_version}
+RUN wget -qO- https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${pcre_version}/pcre2-${pcre_version}.tar.gz | tar xvz
+WORKDIR /tmp/hyperscan/pcre2-${pcre_version}
 RUN ./configure --prefix=/opt/pcre --enable-unicode-properties --enable-utf
 RUN make -j$(nproc) && make install
 RUN cp -r .libs /opt/pcre/
