@@ -7,7 +7,7 @@ ARG LD_LIBRARY_PATH_ARG=${DEVTOOLSET_ROOTPATH}/usr/lib64:${DEVTOOLSET_ROOTPATH}/
 ARG PREPEND_PATH=${DEVTOOLSET_ROOTPATH}/usr/bin:
 
 ARG boost_version=1.57.0
-ARG build_type=RelWithDebugInfo
+ARG build_type=Release
 ARG hyperscan_version=v5.4.2
 ARG pcre_version=10.42
 ARG ragel_version=6.10
