@@ -56,19 +56,20 @@ RUN cmake \
   -DFAT_RUNTIME=ON \
   -DBUILD_STATIC_AND_SHARED=ON \
   -DCMAKE_BUILD_TYPE=${build_type} \
-  -DPCRE_SOURCE=../pcre-${pcre_version} \
+  -DPCRE_SOURCE=../pcre2-${pcre_version} \
   -DCMAKE_C_FLAGS="${CFLAGS}" \
   -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
   ../
 RUN make -j$(nproc) && make install
 
 FROM base
+LABEL maintainer="David Gidwani <david.gidwani@atomweight.io>"
+LABEL org.opencontainers.image.description Python manylinux with Intel Hyperscan
 ARG LD_LIBRARY_PATH_ARG
 ARG PREPEND_PATH
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH_ARG}
 ENV PATH=${PREPEND_PATH}${PATH}
 ENV PKG_CONFIG_PATH=/opt/pcre/lib/pkgconfig:/opt/hyperscan/lib64/pkgconfig:/usr/local/lib/pkgconfig
-LABEL maintainer="David Gidwani <david.gidwani@gmail.com>"
 WORKDIR /opt
 COPY --from=build_hyperscan /opt/pcre/ pcre
 COPY --from=build_hyperscan /opt/hyperscan/ hyperscan
