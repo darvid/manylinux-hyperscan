@@ -59,6 +59,7 @@ RUN cmake \
   -DCMAKE_BUILD_TYPE=${build_type} \
   -DCMAKE_C_FLAGS="${CFLAGS}" \
   -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
+  -DPCRE_SOURCE=../pcre \
   ../
 RUN make -j$(nproc) && make install
 
