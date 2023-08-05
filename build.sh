@@ -32,24 +32,22 @@ if [ "${POLICY}" == "manylinux2014" ]; then
     DEVTOOLSET_ROOTPATH="/opt/rh/devtoolset-10/root"
     PREPEND_PATH="${DEVTOOLSET_ROOTPATH}/usr/bin:"
     if [ "${PLATFORM}" == "i686" ]; then
-        LD_LIBRARY_PATH_ARG="${DEVTOOLSET_ROOTPATH}/usr/lib:${DEVTOOLSET_ROOTPATH}/usr/lib/dyninst"
+        LD_LIBRARY_PATH_ARG="/opt/hyperscan/lib:${DEVTOOLSET_ROOTPATH}/usr/lib:${DEVTOOLSET_ROOTPATH}/usr/lib/dyninst"
     else
-        LD_LIBRARY_PATH_ARG="${DEVTOOLSET_ROOTPATH}/usr/lib64:${DEVTOOLSET_ROOTPATH}/usr/lib:${DEVTOOLSET_ROOTPATH}/usr/lib64/dyninst:${DEVTOOLSET_ROOTPATH}/usr/lib/dyninst:/usr/local/lib64"
+        LD_LIBRARY_PATH_ARG="/opt/hyperscan/lib64:${DEVTOOLSET_ROOTPATH}/usr/lib64:${DEVTOOLSET_ROOTPATH}/usr/lib:${DEVTOOLSET_ROOTPATH}/usr/lib64/dyninst:${DEVTOOLSET_ROOTPATH}/usr/lib/dyninst:/usr/local/lib64"
     fi
 elif [ "${POLICY}" == "manylinux_2_28" ]; then
     DEVTOOLSET_ROOTPATH="/opt/rh/gcc-toolset-12/root"
     PREPEND_PATH="${DEVTOOLSET_ROOTPATH}/usr/bin:"
-    LD_LIBRARY_PATH_ARG="${DEVTOOLSET_ROOTPATH}/usr/lib64:${DEVTOOLSET_ROOTPATH}/usr/lib:${DEVTOOLSET_ROOTPATH}/usr/lib64/dyninst:${DEVTOOLSET_ROOTPATH}/usr/lib/dyninst"
+    LD_LIBRARY_PATH_ARG="/opt/hyperscan/lib64:${DEVTOOLSET_ROOTPATH}/usr/lib64:${DEVTOOLSET_ROOTPATH}/usr/lib:${DEVTOOLSET_ROOTPATH}/usr/lib64/dyninst:${DEVTOOLSET_ROOTPATH}/usr/lib/dyninst"
 elif [ "${POLICY}" == "musllinux_1_1" ]; then
     DEVTOOLSET_ROOTPATH=
     PREPEND_PATH=
-    LD_LIBRARY_PATH_ARG=
+    LD_LIBRARY_PATH_ARG=/opt/hyperscan/lib
 else
     echo "Unsupported policy: '${POLICY}'"
     exit 1
 fi
-
-LD_LIBRARY_PATH_ARG=/opt/hyperscan/lib64:${LD_LIBRARY_PATH_ARG}
 
 export DEVTOOLSET_ROOTPATH
 export PREPEND_PATH
