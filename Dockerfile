@@ -3,7 +3,7 @@ ARG PLATFORM=x86_64
 ARG TAG=2023-07-17-129380e
 
 ARG DEVTOOLSET_ROOTPATH=/opt/rh/gcc-toolset-12/root
-ARG LD_LIBRARY_PATH_ARG=${DEVTOOLSET_ROOTPATH}/usr/lib64:${DEVTOOLSET_ROOTPATH}/usr/lib:${DEVTOOLSET_ROOTPATH}/usr/lib64/dyninst:${DEVTOOLSET_ROOTPATH}/usr/lib/dyninst
+ARG LD_LIBRARY_PATH_ARG=/opt/hyperscan/lib64:/opt/hyperscan/lib:${DEVTOOLSET_ROOTPATH}/usr/lib64:${DEVTOOLSET_ROOTPATH}/usr/lib:${DEVTOOLSET_ROOTPATH}/usr/lib64/dyninst:${DEVTOOLSET_ROOTPATH}/usr/lib/dyninst
 ARG PREPEND_PATH=${DEVTOOLSET_ROOTPATH}/usr/bin:
 
 ARG boost_version=1.57.0
@@ -70,7 +70,7 @@ ARG LD_LIBRARY_PATH_ARG
 ARG PREPEND_PATH
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH_ARG}
 ENV PATH=${PREPEND_PATH}${PATH}
-ENV PKG_CONFIG_PATH=/opt/pcre/lib/pkgconfig:/opt/hyperscan/lib64/pkgconfig:/usr/local/lib/pkgconfig
+ENV PKG_CONFIG_PATH=/opt/pcre/lib/pkgconfig:/opt/hyperscan/lib/pkgconfig:/opt/hyperscan/lib64/pkgconfig:/usr/local/lib/pkgconfig
 WORKDIR /opt
 COPY --from=build_hyperscan /opt/pcre/ pcre
 COPY --from=build_hyperscan /opt/hyperscan/ hyperscan
