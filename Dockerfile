@@ -48,21 +48,20 @@ WORKDIR /tmp/hyperscan
 FROM build_pcre AS build_hyperscan
 ARG build_type
 ARG pcre_version
-WORKDIR /tmp/hyperscan
+RUN mkdir -p build
+WORKDIR /tmp/hyperscan/build
 ENV CFLAGS="-fPIC"
 ENV CXXFLAGS="$CFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"
 RUN cmake \
-  -S . \
-  -B build \
   -DCMAKE_INSTALL_PREFIX=/opt/hyperscan \
   -DFAT_RUNTIME=ON \
   -DBUILD_STATIC_AND_SHARED=ON \
   -DCMAKE_BUILD_TYPE=${build_type} \
   -DCMAKE_C_FLAGS="${CFLAGS}" \
   -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
-  -DPCRE_SOURCE=../pcre
-RUN cmake --build build --parallel $(nproc)
-RUN cmake --install build
+  -DPCRE_SOURCE=../pcre \
+  ../
+RUN make -j$(nproc) && make install
 
 FROM base
 LABEL maintainer="David Gidwani <david.gidwani@atomweight.io>"
