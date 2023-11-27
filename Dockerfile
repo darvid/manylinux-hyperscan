@@ -51,10 +51,11 @@ ARG pcre_version
 RUN mkdir -p build
 WORKDIR /tmp/hyperscan/build
 ENV CFLAGS="-fPIC"
-ENV CXXFLAGS="$CFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"
-RUN cmake \
+RUN [[ "$POLICY" == 'musllinux_1_1' ]] && \
+  export CFLAGS="$CFLAGS -march=core2"; \
+  export CXXFLAGS="$CFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"; \
+  cmake \
   -DCMAKE_INSTALL_PREFIX=/opt/hyperscan \
-  -DFAT_RUNTIME=ON \
   -DBUILD_STATIC_AND_SHARED=ON \
   -DCMAKE_BUILD_TYPE=${build_type} \
   -DCMAKE_C_FLAGS="${CFLAGS}" \
