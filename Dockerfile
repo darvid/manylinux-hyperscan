@@ -8,7 +8,8 @@ ARG PREPEND_PATH=${DEVTOOLSET_ROOTPATH}/usr/bin:
 
 ARG boost_version=1.57.0
 ARG build_type=Release
-ARG hyperscan_version=v5.4.2
+ARG hyperscan_git_source=https://github.com/VectorCamp/vectorscan
+ARG hyperscan_git_tag=vectorscan/5.4.11
 ARG pcre_version=8.45
 ARG ragel_version=6.10
 
@@ -25,38 +26,40 @@ RUN wget -qO- https://www.colm.net/files/ragel/ragel-${ragel_version}.tar.gz | t
 WORKDIR /tmp/ragel-${ragel_version}
 RUN ./configure --prefix=/usr && make -j$(nproc) && make install
 
-FROM base_ragel as base_hyperscan
+FROM base_ragel as base_vectorscan
 ARG boost_version
-ARG hyperscan_version
+ARG hyperscan_git_source
+ARG hyperscan_git_tag
 WORKDIR /tmp
-RUN git clone -b ${hyperscan_version} https://github.com/01org/hyperscan.git
+RUN git clone -b ${hyperscan_git_tag} ${hyperscan_git_source}
 RUN wget -qO- http://downloads.sourceforge.net/project/boost/boost/${boost_version}/boost_$(echo "${boost_version}" | tr . _).tar.bz2 | tar xj
-RUN mv boost*/boost hyperscan/include
+RUN mv boost*/boost vectorscan/include
 
-FROM base_hyperscan as build_pcre
+FROM base_vectorscan as build_pcre
 ARG pcre_version
 ENV CFLAGS="-fPIC"
-WORKDIR /tmp/hyperscan
+WORKDIR /tmp/vectorscan
 RUN wget -qO- https://sourceforge.net/projects/pcre/files/pcre/${pcre_version}/pcre-${pcre_version}.tar.gz/download | tar xvz
 RUN mv pcre-${pcre_version} pcre
-WORKDIR /tmp/hyperscan/pcre
+WORKDIR /tmp/vectorscan/pcre
 RUN ./configure --prefix=/opt/pcre --enable-unicode-properties --enable-utf
 RUN make -j$(nproc) && make install
 RUN cp -r .libs /opt/pcre/
-WORKDIR /tmp/hyperscan
+WORKDIR /tmp/vectorscan
 
-FROM build_pcre AS build_hyperscan
+FROM build_pcre AS build_vectorscan
 ARG build_type
 ARG pcre_version
 RUN mkdir -p build
-WORKDIR /tmp/hyperscan/build
+WORKDIR /tmp/vectorscan/build
 ENV CFLAGS="-fPIC"
 RUN [[ "$POLICY" == 'musllinux_1_1' ]] && \
   export CFLAGS="$CFLAGS -march=core2"; \
   export CXXFLAGS="$CFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"; \
   cmake \
-  -DCMAKE_INSTALL_PREFIX=/opt/hyperscan \
-  -DBUILD_STATIC_AND_SHARED=ON \
+  -DCMAKE_INSTALL_PREFIX=/opt/vectorscan \
+  -DBUILD_STATIC_LIBS=ON \
+  -DBUILD_SHARED_LIBS=ON \
   -DCMAKE_BUILD_TYPE=${build_type} \
   -DCMAKE_C_FLAGS="${CFLAGS}" \
   -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
@@ -66,12 +69,12 @@ RUN make -j$(nproc) && make install
 
 FROM base
 LABEL maintainer="David Gidwani <david.gidwani@atomweight.io>"
-LABEL org.opencontainers.image.description Python manylinux with Intel Hyperscan
+LABEL org.opencontainers.image.description Python manylinux with Intel Vectorscan
 ARG LD_LIBRARY_PATH_ARG
 ARG PREPEND_PATH
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH_ARG}
 ENV PATH=${PREPEND_PATH}${PATH}
-ENV PKG_CONFIG_PATH=/opt/pcre/lib/pkgconfig:/opt/hyperscan/lib/pkgconfig:/opt/hyperscan/lib64/pkgconfig:/usr/local/lib/pkgconfig
+ENV PKG_CONFIG_PATH=/opt/pcre/lib/pkgconfig:/opt/vectorscan/lib/pkgconfig:/opt/vectorscan/lib64/pkgconfig:/usr/local/lib/pkgconfig
 WORKDIR /opt
-COPY --from=build_hyperscan /opt/pcre/ pcre
-COPY --from=build_hyperscan /opt/hyperscan/ hyperscan
+COPY --from=build_vectorscan /opt/pcre/ pcre
+COPY --from=build_vectorscan /opt/vectorscan/ vectorscan
