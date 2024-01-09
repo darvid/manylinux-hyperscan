@@ -7,7 +7,7 @@ ARG LD_LIBRARY_PATH_ARG=${DEVTOOLSET_ROOTPATH}/usr/lib64:${DEVTOOLSET_ROOTPATH}/
 ARG PREPEND_PATH=${DEVTOOLSET_ROOTPATH}/usr/bin:
 
 ARG boost_version=1.57.0
-ARG build_type=Release
+ARG build_type=MinSizeRel
 ARG hyperscan_git_source=https://github.com/VectorCamp/vectorscan
 ARG hyperscan_git_tag=vectorscan/5.4.11
 ARG pcre_version=8.45
