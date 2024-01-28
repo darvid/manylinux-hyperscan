@@ -48,13 +48,16 @@ RUN cp -r .libs /opt/pcre/
 WORKDIR /tmp/vectorscan
 
 FROM build_pcre AS build_vectorscan
+ARG POLICY
+ARG PLATFORM
 ARG build_type
 ARG pcre_version
 RUN mkdir -p build
 WORKDIR /tmp/vectorscan/build
 ENV CFLAGS="-fPIC"
-RUN [[ "$POLICY" == 'musllinux_1_1' ]] && \
-  export CFLAGS="$CFLAGS -march=core2"; \
+RUN if [[ "$POLICY" == 'musllinux_1_1' ]]; then \
+  [[ "$PLATFORM" == 'aarch64' ]] && export CFLAGS="$CFLAGS -march=armv8-a" \
+  || export CFLAGS="$CFLAGS -march=core2"; fi; \
   export CXXFLAGS="$CFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"; \
   cmake \
   -DCMAKE_INSTALL_PREFIX=/opt/vectorscan \
