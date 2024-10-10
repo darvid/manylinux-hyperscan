@@ -1,6 +1,6 @@
 ARG POLICY=manylinux2014
 ARG PLATFORM=x86_64
-ARG TAG=2024-01-08-eb135ed
+ARG TAG=2024-10-07-1887322
 
 ARG DEVTOOLSET_ROOTPATH=/opt/rh/gcc-toolset-12/root
 ARG LD_LIBRARY_PATH_ARG=${DEVTOOLSET_ROOTPATH}/usr/lib64:${DEVTOOLSET_ROOTPATH}/usr/lib:${DEVTOOLSET_ROOTPATH}/usr/lib64/dyninst:${DEVTOOLSET_ROOTPATH}/usr/lib/dyninst
@@ -26,7 +26,7 @@ RUN wget -qO- https://www.colm.net/files/ragel/ragel-${ragel_version}.tar.gz | t
 WORKDIR /tmp/ragel-${ragel_version}
 RUN ./configure --prefix=/usr && make -j$(nproc) && make install
 
-FROM base_ragel as base_vectorscan
+FROM base_ragel AS base_vectorscan
 ARG boost_version
 ARG hyperscan_git_source
 ARG hyperscan_git_tag
@@ -35,7 +35,7 @@ RUN git clone -b ${hyperscan_git_tag} ${hyperscan_git_source}
 RUN wget -qO- http://downloads.sourceforge.net/project/boost/boost/${boost_version}/boost_$(echo "${boost_version}" | tr . _).tar.bz2 | tar xj
 RUN mv boost*/boost vectorscan/include
 
-FROM base_vectorscan as build_pcre
+FROM base_vectorscan AS build_pcre
 ARG pcre_version
 ENV CFLAGS="-fPIC"
 WORKDIR /tmp/vectorscan
@@ -72,7 +72,7 @@ RUN make -j$(nproc) && make install
 
 FROM base
 LABEL maintainer="David Gidwani <david.gidwani@atomweight.io>"
-LABEL org.opencontainers.image.description Python manylinux with Intel Vectorscan
+LABEL org.opencontainers.image.description Python manylinux with Vectorscan
 ARG LD_LIBRARY_PATH_ARG
 ARG PREPEND_PATH
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH_ARG}
